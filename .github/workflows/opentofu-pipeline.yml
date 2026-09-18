@@ -1,0 +1,32 @@
+﻿name: OpenTofu CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  opentofu-validate-plan:
+    name: Validar e Infraestructura Plan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del codigo
+        uses: actions/checkout@v4
+
+      - name: Configurar OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: 1.6.0
+
+      - name: OpenTofu Init
+        run: tofu init
+
+      - name: OpenTofu Validate
+        run: tofu validate
+
+      - name: OpenTofu Plan
+        run: tofu plan
+        env:
+          TF_VAR_api_secret_token: ${{ secrets.MI_API_SECRET }}
